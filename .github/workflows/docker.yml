@@ -13,25 +13,40 @@ jobs:
       matrix:
         include:
           - name: base
-            path: ''
-            suffix: ''
+            path: ""
+            suffix: ""
             qemu: false
+            platform: linux/amd64
           - name: nvidia
-            path: 'nvidia.'
-            suffix: '-nvidia'
+            path: "nvidia."
+            suffix: "-nvidia"
             qemu: false
+            platform: linux/amd64
+          - name: nvidia
+            path: "nvidia."
+            suffix: "-arm64-nvidia"
+            qemu: true
+            platform: linux/arm64
           - name: vaapi
-            path: 'vaapi.'
-            suffix: '-vaapi'
+            path: "vaapi."
+            suffix: "-vaapi"
             qemu: false
+            platform: linux/amd64
+          - name: vaapi
+            path: "vaapi."
+            suffix: "-arm64-vaapi"
+            qemu: true
+            platform: linux/arm64
           - name: arm32v7
-            path: 'arm32v7.'
-            suffix: '-arm'
+            path: "arm32v7."
+            suffix: "-arm"
             qemu: true
+            platform: linux/arm/v7
           - name: arm64
-            path: 'arm64.'
-            suffix: '-arm64'
+            path: "arm64."
+            suffix: "-arm64"
             qemu: true
+            platform: linux/arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,30 +74,6 @@ jobs:
           context: .
           file: ./${{ matrix.path }}Dockerfile
           push: true
+          platforms: ${{ matrix.platform }}
           tags: |
             jasongdove/ersatztv-ffmpeg:7.0${{ matrix.suffix }}
-        if: ${{ matrix.name != 'arm64' && matrix.name != 'arm32v7' }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          builder: ${{ steps.docker-buildx.outputs.name }}
-          context: .
-          file: ./${{ matrix.path }}Dockerfile
-          push: true
-          platforms: 'linux/arm64'
-          tags: |
-            jasongdove/ersatztv-ffmpeg:7.0${{ matrix.suffix }}
-        if: ${{ matrix.name == 'arm64' }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          builder: ${{ steps.docker-buildx.outputs.name }}
-          context: .
-          file: ./${{ matrix.path }}Dockerfile
-          push: true
-          platforms: 'linux/arm/v7'
-          tags: |
-            jasongdove/ersatztv-ffmpeg:7.0${{ matrix.suffix }}
-        if: ${{ matrix.name == 'arm32v7' }}

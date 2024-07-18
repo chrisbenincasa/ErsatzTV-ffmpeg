@@ -60,7 +60,7 @@ RUN apt-get -yqq update && \
     make \
     nasm \
     ninja-build \
-    nvidia-cuda-toolkit \
+    cuda-toolkit \
     ocl-icd-opencl-dev \
     patch \
     perl \
